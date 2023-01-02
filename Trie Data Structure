@@ -1,0 +1,116 @@
+class TrieNode{
+    public:
+    char data;
+    TrieNode* children[26]; //A node has utmost 26 children 
+    bool isTerminal; //Used to search which tells us weve reached the end of the word or not
+
+    TrieNode(char ch){
+        data=ch;
+        for(int i=0;i<26;i++){ //Initialising the children
+            children[i]=NULL; 
+        }
+        isTerminal=false; //Iniitially it is false;
+    }
+};
+
+
+
+class Trie {
+public:
+
+   TrieNode* root;
+
+
+    Trie() {
+         root=new TrieNode('\0');
+    }
+    
+    void insertUtil(TrieNode* root,string word){
+        //We use Recursion
+
+        if(word.length()==0){ 
+            //Base Case When the word gets over !!
+            root->isTerminal=true; //Since it is the last character we make it as the terminal
+            return;
+
+        }
+        //Assuming everything will be in Capital Letters
+        int index=word[0]-'a';
+        TrieNode* child;
+
+        //If present 
+        if(root->children[index]!=NULL){
+            //The character your trying to insert is already there in the trie , Just go forward
+            child=root->children[index]; //Go down
+
+        }else{
+            //Absent in the trie
+            child=new TrieNode(word[0]);
+            root->children[index]=child;
+
+        }
+        return insertUtil(child,word.substr(1));//Calling Recursion for the child node and and the word string leaving first index 
+    }
+
+    void insert(string word) {
+    insertUtil(root,word); //Helper function 
+    }    
+
+ bool searchUtil(TrieNode* root,string word){
+  
+        if(word.length()==0){
+            return root->isTerminal;
+            //Checks if the last character of the word is the last character of the trie
+            //then returns true false accordingly
+            //suppose you searched hell and the word stored in trie is hello , we should get false because o should be present
+
+        }
+        int index=word[0]-'a';
+        TrieNode* child;
+        if(root->children[index]!=NULL){
+            //Character is present , Go forward
+            child=root->children[index];
+        }else{
+            //Not present 
+            return false;
+        }
+
+        return searchUtil(child,word.substr(1));
+    }
+
+
+
+    bool search(string word) {
+       return searchUtil(root,word);  
+    }
+    
+
+
+
+    bool startUtil(TrieNode* root,string word){
+  
+        if(word.length()==0){
+            return true;
+            //Checks if the last character of the word is the last character of the trie
+            //then returns true false accordingly
+            //suppose you searched hell and the word stored in trie is hello , we should get false because o should be present
+
+        }
+        int index=word[0]-'a';
+        TrieNode* child;
+        if(root->children[index]!=NULL){
+            //Character is present , Go forward
+            child=root->children[index];
+        }else{
+            //Not present 
+            return false;
+        }
+
+        return startUtil(child,word.substr(1));
+    }
+
+
+    bool startsWith(string word) {
+        return startUtil(root,word);
+    }
+};
